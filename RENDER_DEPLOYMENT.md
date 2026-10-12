@@ -82,9 +82,9 @@ The service worker is enabled for production deployments and disabled by `npm ru
 1. Open the deployed home page while online and let it finish loading.
 2. Reload the page once so the service worker can take control.
 3. Create and save a quest while online.
-4. Use your browser's developer tools to switch to offline mode, then reload the home page and open the saved quest.
+4. Use your browser's developer tools to switch to offline mode, reload the home page, and open the saved quest from the home page.
 
-The app shell, bundled static assets, and data already stored by the browser should be available offline. Quest generation requires an internet connection to reach the hosted model; prepare a quest before going offline.
+The cached home page, its cached static assets, and data already stored in the browser should be available offline. Offline navigation is limited to the home page; routes such as `/create` and quest generation are unavailable without a connection. Prepare and save a quest before going offline.
 
 ## Data and Render plan notes
 

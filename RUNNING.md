@@ -4,7 +4,7 @@ This guide covers starting the app on your computer, enabling AI quest generatio
 
 ## Prerequisites
 
-- Node.js and npm
+- Node.js 20.9 or newer and npm
 - A modern browser such as Chrome, Edge, or Firefox
 - Ollama only if you want AI-generated quests; the app can run without it and will use a ready-made fallback quest when generation is unavailable
 
@@ -77,7 +77,7 @@ npm run build
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) while online and allow the page to finish loading. Reload once so the service worker can take control, then create or open a saved quest. Use the browser's developer tools to switch to offline mode and reload the app. The app shell and data already saved in IndexedDB should remain available. AI quest generation requires Ollama connectivity; save a quest before going offline to continue it without a network connection.
+Open [http://localhost:3000](http://localhost:3000) while online and allow the page to finish loading. Reload once so the service worker can take control, then create and save a quest. Use the browser's developer tools to switch to offline mode and reload the home page. The cached home page and data already saved in IndexedDB should remain available, so open the quest from the home page's saved-quest list. Other routes, including `/create`, are not available offline. AI quest generation requires Ollama connectivity; save a quest before going offline to continue it without a network connection.
 
 Press `Ctrl+C` in the terminal to stop the production server.
 
@@ -88,4 +88,4 @@ Press `Ctrl+C` in the terminal to stop the production server.
 - **Changes to `.env.local` do not take effect:** Stop and restart the Next.js server after changing environment variables.
 - **Saved data is missing:** Browser data is separated by origin and browser profile. Data stored on `localhost` is not shared with a deployed site or another browser.
 
-For hosted deployment steps, see [DEPLOYMENT.md](DEPLOYMENT.md).
+For hosted deployment steps, see [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md).
