@@ -34,32 +34,40 @@ Render provides the deployed site at an HTTPS `onrender.com` URL. Open that URL 
 
 ## 2. Configure environment variables
 
-Add these in the Render service's **Environment** settings. Do not upload `.env.local` or commit API keys to the repository.
+In the Render service, open **Environment** and add the variables from the option you want. `NODE_VERSION` is shared by both options. The `OLLAMA_*` variables control server-side quest generation; they are not browser variables. Do not upload `.env.local`, commit credentials, or prefix these settings with `NEXT_PUBLIC_`.
+
+| Variable | Required? | Purpose and value |
+| --- | --- | --- |
+| `NODE_VERSION` | Recommended | Set to `22.22.0` to pin the deployment to the version used in this guide. The app requires Node.js 20.9 or newer. |
+| `OLLAMA_ENABLED` | Optional | Set to exactly `true` to attempt Ollama generation, or exactly `false` to always use built-in fallback quests. If omitted, the app attempts Ollama. |
+| `OLLAMA_BASE_URL` | Required for hosted AI | Base URL of a reachable Ollama-compatible service, with no trailing slash. The app appends `/api/chat`. |
+| `OLLAMA_MODEL` | Required for hosted AI | Model ID available to the configured service, such as `gemma4:31b-cloud` for a provider that offers it. |
+| `OLLAMA_API_KEY` | Only if required by provider | Provider credential sent as a Bearer token. Mark it secret in Render. Leave unset if the endpoint does not require a key. |
 
 ### Option A: Hosted Ollama-compatible API
 
-Use this when you want AI-generated quests on the deployed site:
+Set these for AI-generated quests on the deployed site:
 
-| Key | Value |
+| Key | Example value |
 | --- | --- |
 | `NODE_VERSION` | `22.22.0` |
 | `OLLAMA_ENABLED` | `true` |
-| `OLLAMA_BASE_URL` | `https://ollama.com` or your hosted Ollama-compatible service URL |
+| `OLLAMA_BASE_URL` | `https://ollama.com` or your provider's Ollama-compatible base URL |
 | `OLLAMA_MODEL` | A model ID enabled for that service, for example `gemma4:31b-cloud` |
-| `OLLAMA_API_KEY` | Your provider key; mark it secret in Render |
+| `OLLAMA_API_KEY` | Your provider key, only if required; mark it secret |
 
-The app calls the Ollama native `/api/chat` endpoint. Set the base URL without a trailing slash and use a model ID available to that provider. The API key is read by the server only; never name it with a `NEXT_PUBLIC_` prefix. Check your provider's pricing and usage limits before enabling a public demo.
+The app sends a POST request to `<OLLAMA_BASE_URL>/api/chat` and includes the key as a Bearer token when one is set. Use a model ID supported by your provider and check its pricing and usage limits before enabling a public demo. If the provider is unavailable or returns an invalid quest, the app returns a built-in fallback quest instead.
 
 ### Option B: Fallback quests only
 
-If you do not have a hosted model endpoint, set:
+For a deployment without an AI provider, set only:
 
 | Key | Value |
 | --- | --- |
 | `NODE_VERSION` | `22.22.0` |
 | `OLLAMA_ENABLED` | `false` |
 
-With `OLLAMA_ENABLED=false`, the app skips Ollama and supplies a ready-made quest. You can omit the other `OLLAMA_*` values. This is the simplest configuration for getting the site online, but it does not demonstrate AI quest generation.
+With `OLLAMA_ENABLED=false`, the app skips Ollama and always supplies a ready-made quest. Do not set `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, or `OLLAMA_API_KEY` for this option. This is the simplest configuration, but it does not provide AI-generated quests.
 
 > Do not leave `OLLAMA_BASE_URL` as `http://127.0.0.1:11434` for a Render deployment. That address refers to the Render service's own container, not your computer. To use your own Ollama machine, it would need a secure, publicly reachable endpoint; do not expose an unauthenticated Ollama server to the internet.
 
